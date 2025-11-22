@@ -25,9 +25,8 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 # ---------------- SENDGRID CONFIG ----------------
 # Make sure to set these environment variables locally and on Render:
 # SENDGRID_API_KEY and FROM_EMAIL
-SENDGRID_API_KEY = os.environ.get("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")
+SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")  # now uses environment variable
 FROM_EMAIL = os.environ.get("FROM_EMAIL", "project.ecocoin@gmail.com")
-
 otp_storage = {}
 
 # ---------------- DATABASE ----------------
