@@ -6,7 +6,10 @@ from werkzeug.utils import secure_filename
 import bcrypt
 from datetime import datetime
 import base64
-from flask_mail import Mail, Message
+
+# SendGrid imports
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 # ---------------- CONFIG ----------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -19,13 +22,11 @@ app.secret_key = os.environ.get("ECO_SECRET", "supersecretkey")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-# ---------------- EMAIL CONFIG ----------------
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'project.ecocoin@gmail.com'
-app.config['MAIL_PASSWORD'] = 'kmscykbxrooqbrqn'  # ✅ Your generated Gmail App Password
-mail = Mail(app)
+# ---------------- SENDGRID CONFIG ----------------
+# Make sure to set these environment variables locally and on Render:
+# SENDGRID_API_KEY and FROM_EMAIL
+SENDGRID_API_KEY = os.environ.get("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")
+FROM_EMAIL = os.environ.get("FROM_EMAIL", "project.ecocoin@gmail.com")
 
 otp_storage = {}
 
@@ -57,7 +58,8 @@ def init_db():
         username TEXT,
         gender TEXT,
         address TEXT,
-        joined TEXT
+        joined TEXT,
+        secret_pin TEXT
     )
     """)
     cur.execute("""
@@ -91,8 +93,7 @@ def inject_now():
 def index():
     return render_template("index.html")
 
-# -------- OTP SENDING ROUTE (Fixed to JSON Response) --------
-# -------- OTP SENDING ROUTE (Fixed to JSON Response) --------
+# -------- OTP SENDING ROUTE (SendGrid) --------
 @app.route('/send_otp', methods=['POST'])
 def send_otp():
     email = request.form.get('email')
@@ -102,28 +103,30 @@ def send_otp():
     otp = str(random.randint(100000, 999999))
     otp_storage[email] = otp
 
-    msg = Message(
-        'EcoCoin Email Verification - OTP Inside 🌿',
-        sender='project.ecocoin@gmail.com',
-        recipients=[email]
-    )
-
-    msg.body = f"""Welcome to EcoCoin!
-
-Thank you for registering with us. 
-Your One-Time Password (OTP) for completing your registration is: {otp}
-
-Please do not share this code with anyone. 
-The OTP will expire in 10 minutes.
-
-– Team EcoCoin 🌱
-"""
+    # Build the SendGrid message
+    html_content = f"""
+        <h2>Welcome to EcoCoin!</h2>
+        <p>Your One-Time Password (OTP) is: <strong>{otp}</strong></p>
+        <p>Please do not share this code with anyone. The OTP will expire in 10 minutes.</p>
+        <p>— Team EcoCoin 🌱</p>
+    """
 
     try:
-        mail.send(msg)
+        if not SENDGRID_API_KEY:
+            raise RuntimeError("SENDGRID_API_KEY environment variable is not set")
+
+        message = Mail(
+            from_email=FROM_EMAIL,
+            to_emails=email,
+            subject="EcoCoin Email Verification - OTP Inside 🌿",
+            html_content=html_content
+        )
+        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        response = sg.send(message)
+        # optional: you can check response.status_code
         return jsonify({"success": True, "message": "OTP sent successfully!"}), 200
     except Exception as e:
-        print("Email Error:", e)
+        print("SendGrid Error:", e)
         return jsonify({"error": "Failed to send OTP"}), 500
 
 
