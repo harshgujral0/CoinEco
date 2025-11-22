@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  body {
+    background-color: #f3fdf3;
+    font-family: Arial, sans-serif;
+    padding-top: 70px;
+  }
+
+  .admin-card {
+    max-width: 1200px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 25px 35px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    text-align: center;
+  }
+
+  .admin-card h3 {
+    color: #1c4d2b;
+    margin-bottom: 20px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  th, td {
+    border: 1px solid #d8f0d8;
+    padding: 10px 12px;
+    text-align: center;
+  }
+
+  th {
+    background-color: #d6f5d6;
+    color: #1f512d;
+    font-weight: bold;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f6fff6;
+  }
+
+  tr:hover {
+    background-color: #eafbe8;
+  }
+</style>
+
+<div class="admin-card">
+  <h3>Admin Dashboard - All Users</h3>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for category, message in messages %}
+  <div class="alert alert-{{ 'danger' if category == 'danger' else 'success' }}">{{ message }}</div>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Balance</th>
+        <th>Username</th>
+        <th>Gender</th>
+        <th>Address</th>
+        <th>Joined</th>
+        <th>PIN</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user['id'] }}</td>
+        <td>{{ user['name'] }}</td>
+        <td>{{ user['email'] }}</td>
+        <td>{{ user['balance'] }}</td>
+        <td>{{ user['username'] or 'N/A' }}</td>
+        <td>{{ user['gender'] or 'N/A' }}</td>
+        <td>{{ user['address'] or 'N/A' }}</td>
+        <td>{{ user['joined'] or 'N/A' }}</td>
+        <td>{{ user['secret_pin'] or 'N/A' }}</td>
+        <td>
+          <a href="{{ url_for('admin_edit', user_id=user['id']) }}" class="btn btn-warning btn-sm">Edit</a>
+          <form method="POST" action="{{ url_for('admin_delete', user_id=user['id']) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this user?')">
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}</content>
+<parameter name="filePath">/home/ashank/Desktop/projects/EcoCoinSite/templates/admin.html

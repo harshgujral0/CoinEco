@@ -1,0 +1,78 @@
+/* 🌿 EcoCoin Modern Style */
+body {
+    background: #e8f5e9; /* light greenish background */
+    color: #1b1b1b;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(180deg, #f6fff6 0%, #e8fbe8 100%);
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar */
+.navbar {
+  background: #ffffff;
+  box-shadow: 0 2px 15px rgba(0, 100, 0, 0.08);
+}
+
+/* Hero section image */
+.hero-section img {
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 128, 0, 0.1);
+}
+
+/* About section */
+.about-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f9fff9 100%);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 80, 0, 0.07);
+  padding: 24px;
+  margin: 30px auto;
+  max-width: 900px;
+  transition: all 0.4s ease;
+}
+
+.about-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 100, 0, 0.12);
+}
+
+/* Help section block */
+.help-block {
+  background: linear-gradient(145deg, #e8ffe6 0%, #d4fbd6 100%);
+  border-left: 6px solid #4caf50;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 80, 0, 0.1);
+  padding: 24px;
+  margin: 30px auto;
+  max-width: 900px;
+  animation: floatBlock 3s ease-in-out infinite alternate;
+}
+
+.help-block h3 {
+  color: #1b5e20;
+}
+
+.help-block a {
+  color: #2e7d32;
+  text-decoration: underline;
+}
+
+@keyframes floatBlock {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-6px); }
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  background: #e8ffe8;
+  padding: 20px 0;
+  color: #2e7d32;
+  font-weight: 500;
+  border-top: 2px solid #cceccc;
+  margin-top: 50px;
+}

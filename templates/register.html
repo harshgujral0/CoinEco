@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4">Register</h2>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ 'danger' if category == 'danger' else 'warning' if category == 'warning' else 'success' }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<form method="POST">
+  <div class="mb-3">
+    <label class="form-label">Full Name</label>
+    <input type="text" name="name" class="form-control" placeholder="Enter your full name" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Email Address</label>
+    <div class="input-group">
+      <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email" value="{{ email or '' }}" required>
+      <button type="button" class="btn btn-outline-primary" id="sendOtpBtn">Send OTP</button>
+    </div>
+    <small class="text-muted">An OTP will be sent to this email for verification.</small>
+  </div>
+
+  <div class="mb-3" id="otpSection" style="display:none;">
+    <label class="form-label">Enter OTP</label>
+    <input type="text" name="otp" id="otp" class="form-control" placeholder="Enter 6-digit OTP">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Password</label>
+    <input type="password" name="password" class="form-control" placeholder="Create a strong password" required>
+  </div>
+
+  <!-- Webcam Section -->
+  <div class="mb-3">
+    <label class="form-label">Capture Live Photo (Required)</label><br>
+    <video id="video" width="320" height="240" autoplay class="border rounded"></video>
+    <canvas id="canvas" width="320" height="240" style="display:none;"></canvas><br>
+
+    <button type="button" id="captureBtn" class="btn btn-outline-success btn-sm mt-2">📸 Capture</button>
+    <button type="button" id="retakeBtn" class="btn btn-outline-warning btn-sm mt-2" style="display:none;">🔄 Retake</button>
+  </div>
+
+  <input type="hidden" name="photo_data" id="photo_data" required>
+
+  <button type="submit" class="btn btn-success mt-3 w-100">Register</button>
+</form>
+
+<!-- OTP + Webcam JS -->
+<script>
+document.getElementById("sendOtpBtn").addEventListener("click", async () => {
+  const email = document.getElementById("email").value.trim();
+  if (!email) {
+    alert("Please enter your email first!");
+    return;
+  }
+  const formData = new FormData();
+  formData.append("email", email);
+
+  const res = await fetch("/send_otp", { method: "POST", body: formData });
+  const data = await res.json();
+  if (res.ok) {
+    alert(data.message || "OTP sent successfully to your email!");
+    document.getElementById("otpSection").style.display = "block";
+  } else {
+    alert(data.error || "Error sending OTP. Try again.");
+  }
+});
+</script>
+
+<script src="{{ url_for('static', filename='js/webcam.js') }}"></script>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .eco-img { margin: 32px 0 16px 0; max-width: 530px; width: 100%; border-radius: 16px; box-shadow: 0 8px 32px rgba(60,179,113,0.16); border:7px solid #e9feee; }
+  .shiny-text { font-size:1.35rem; font-weight:700; text-align:center; background: linear-gradient(110deg,#177123 40%, #b1ff9b 55%, #fffbe9 65%, #45b753 80%); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation: shine 3s linear infinite; margin-top:10px; }
+  @keyframes shine { to { background-position:200% center; } }
+  .section { margin: 45px auto 0 auto; max-width:950px; border-radius:17px; background: rgba(255,255,255,0.965); box-shadow: 0 6px 32px rgba(44,93,47,0.08); padding:2.2rem; }
+</style>
+
+<!-- HERO -->
+<main id="main-hero" class="text-center">
+  <img class="eco-img" src="{{ url_for('static', filename='WhatsApp-Image-2025-10-27-at-20.59.15_857ebbf7.jpg') }}" alt="EcoCoin" width="530" height="300" loading="lazy"/>
+  <div class="shiny-text" aria-live="polite">Join EcoCoin and start earning rewards for every bottle you recycle.</div>
+</main>
+
+<!-- ABOUT -->
+<section id="about" class="section" tabindex="0">
+  <h2 class="section-title">About EcoCoin</h2>
+  <p>Welcome to EcoCoin — an innovative step toward a cleaner and smarter planet. 🌎
+We are a passionate team of young innovators From MIET, Jammu working to transform how people view recycling and make sustainability simple and rewarding for everyone.
+
+At EcoCoin, we believe small actions create a big difference. Our AI-powered smart recycling system encourages people to recycle plastic waste by rewarding them with EcoCoins, our digital credit system. Users can earn credits, track progress, and join a growing green community.
+
+Our team brings together talent from engineering, design, and sustainability — all united by one vision: to reduce plastic pollution and build a circular economy through technology and awareness. 💚♻</p>
+</section>
+
+<!-- HELP -->
+<section id="help" class="section" style="margin-bottom:60px;">
+  <h2 class="section-title">Need Help?</h2>
+  <p>
+    For questions or feedback, fill out our
+    <a id="help-link" href="https://docs.google.com/forms/d/e/1FAIpQLSc4DSK0gDw2Tg807pK1K0IyWyI6rMXp0JFHJYVVqOXIBRULkw/viewform?usp=sf_link" target="_blank" rel="noopener noreferrer">Support Form</a>
+    and our team will get back to you soon.<br />
+    You can also email us at:
+    <a href="mailto:ecocoin011@gmail.com">ecocoin011@gmail.com</a><br />
+    Or call:
+    <a href="tel:9103203077">9103203077</a><br />
+    Thanks-Team: Innovators
+  </p>
+</section>
+
+{% endblock %}

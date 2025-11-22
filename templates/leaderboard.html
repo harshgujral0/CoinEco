@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+  body {
+    background-color: #f3fdf3;
+    margin: 0;
+    padding-top: 70px;
+    font-family: Arial, sans-serif;
+  }
+
+  .leaderboard {
+    max-width: 900px;
+    margin: 40px auto;
+  }
+
+  .leader-title {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .leader-title h2 {
+    margin: 0;
+    color: #1b4d2a;
+    font-weight: 700;
+  }
+
+  .leader-title p {
+    margin: 5px 0 0 0;
+    color: #2b5e35;
+    font-size: 0.95rem;
+  }
+
+  .leader-card {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(240, 255, 240, 0.97));
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 6px 20px rgba(30, 100, 50, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .user-photo {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .progress-wrap {
+    width: 200px;
+  }
+
+  .mini-chart {
+    width: 60px;
+    height: 60px;
+  }
+
+  .rank-badge {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #6bbf59, #2f8f3b);
+  }
+</style>
+
+<div class="leaderboard">
+  <div class="leader-title">
+    <h2>LeaderBoard</h2>
+    <p>Top recyclers — hybrid eco + modern theme</p>
+  </div>
+
+  <!-- User leaderboard list -->
+  <div>
+    {% for user in users %}
+    <div class="leader-card">
+      <img class="user-photo" src="{{ url_for('static', filename='uploads/' + (user['photo'] or '')) }}" alt="photo">
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div><strong>{{ user['name'] }}</strong></div>
+          <div class="rank-badge">#{{ loop.index }}</div>
+          <div style="margin-left:8px;color:#2f6f36;">{{ user['balance'] }} pts</div>
+        </div>
+        <div style="margin-top:8px; display:flex; gap:12px; align-items:center;">
+          <div class="progress-wrap">
+            <div class="progress" style="height:12px; border-radius:8px;">
+              <div class="progress-bar" role="progressbar"
+                style="width: {{ (user['balance'] / (users[0]['balance'] if users and users[0]['balance']>0 else 1) * 100) | round(0) }}%;"
+                aria-valuenow="{{ user['balance'] }}" aria-valuemin="0"
+                aria-valuemax="{{ users[0]['balance'] if users else 100 }}">
+              </div>
+            </div>
+          </div>
+          <div>
+            <small>Contribution split</small>
+            <canvas class="mini-chart" id="userPie-{{ user['id'] }}" data-uid="{{ user['id'] }}"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const userBreakdowns = {{ user_breakdowns | tojson }};
+  document.querySelectorAll('canvas[id^="userPie-"]').forEach((canvas) => {
+    const uid = canvas.dataset.uid;
+    const breakdown = userBreakdowns[uid] || {};
+    const keys = Object.keys(breakdown);
+    const vals = Object.values(breakdown);
+    new Chart(canvas.getContext('2d'), {
+      type: 'doughnut',
+      data: keys.length ? { labels: keys, datasets: [{ data: vals }] }
+                        : { labels: ['No data'], datasets: [{ data: [1], backgroundColor: ['#ccc'] }] },
+      options: { plugins: { legend: { display: false } }, cutout: '60%' }
+    });
+  });
+</script>
+{% endblock %}

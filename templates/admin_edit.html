@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  body {
+    background-color: #f3fdf3;
+    font-family: Arial, sans-serif;
+    padding-top: 70px;
+  }
+
+  .form-container {
+    max-width: 700px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    padding: 30px 40px;
+  }
+
+  .form-container h2 {
+    text-align: center;
+    color: #1f512d;
+    margin-bottom: 25px;
+  }
+
+  label {
+    display: block;
+    margin-top: 15px;
+    color: #1f512d;
+    font-weight: 600;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #d1e7d1;
+    border-radius: 8px;
+  }
+
+  button {
+    display: block;
+    width: 100%;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #23913e;
+  }
+</style>
+
+<div class="form-container">
+  <h2>Edit User</h2>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for category, message in messages %}
+  <div class="alert alert-{{ 'danger' if category == 'danger' else 'success' }}">{{ message }}</div>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  <form method="POST">
+    <label>Name</label>
+    <input type="text" name="name" value="{{ user['name'] }}" required>
+
+    <label>Email</label>
+    <input type="email" name="email" value="{{ user['email'] }}" required>
+
+    <label>Balance</label>
+    <input type="number" name="balance" value="{{ user['balance'] }}" required>
+
+    <label>Username</label>
+    <input type="text" name="username" value="{{ user['username'] or '' }}">
+
+    <label>Gender</label>
+    <select name="gender">
+      <option value="">Select</option>
+      <option value="Male" {% if user['gender']=='Male' %}selected{% endif %}>Male</option>
+      <option value="Female" {% if user['gender']=='Female' %}selected{% endif %}>Female</option>
+      <option value="Other" {% if user['gender']=='Other' %}selected{% endif %}>Other</option>
+    </select>
+
+    <label>Address</label>
+    <textarea name="address">{{ user['address'] or '' }}</textarea>
+
+    <label>Joined</label>
+    <input type="text" name="joined" value="{{ user['joined'] or '' }}">
+
+    <label>Secret PIN</label>
+    <input type="text" name="secret_pin" value="{{ user['secret_pin'] or '' }}">
+
+    <button type="submit">Save Changes</button>
+  </form>
+
+</div>
+{% endblock %}</content>
+<parameter name="filePath">/home/ashank/Desktop/projects/EcoCoinSite/templates/admin_edit.html

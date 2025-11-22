@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  body {
+    background-color: #f3fdf3;
+    font-family: Arial, sans-serif;
+    padding-top: 70px;
+  }
+
+  .dashboard-card {
+    max-width: 750px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 25px 35px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    text-align: center;
+  }
+
+  .dashboard-card img {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 15px;
+  }
+
+  .dashboard-card h3 {
+    color: #1c4d2b;
+    margin-bottom: 5px;
+  }
+
+  .dashboard-card p {
+    color: #3b3b3b;
+    margin-bottom: 10px;
+  }
+
+  .transactions-title {
+    color: #206c3b;
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  th, td {
+    border: 1px solid #d8f0d8;
+    padding: 10px 12px;
+    text-align: center;
+  }
+
+  th {
+    background-color: #d6f5d6;
+    color: #1f512d;
+    font-weight: bold;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f6fff6;
+  }
+
+  tr:hover {
+    background-color: #eafbe8;
+  }
+
+  .no-transactions {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+  }
+</style>
+
+<div class="dashboard-card">
+  <img src="{{ url_for('static', filename='uploads/' + (user['photo'] or 'default.jpg')) }}" alt="User Photo">
+  <h3>{{ user['name'] }}</h3>
+
+  <p>Balance: <strong>{{ user['balance'] }} EcoCoins</strong></p>
+
+  <!-- ✔ ADD THIS LINE (displays secret pin) -->
+  <p>Your 6-Digit EcoCoin PIN: <strong>{{ user['secret_pin'] }}</strong></p>
+
+  <div class="transactions-title">Recent Transactions</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Weight (g)</th>
+        <th>Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if transactions and transactions|length > 0 %}
+        {% for txn in transactions %}
+        <tr>
+          <td>{{ txn['date'] }}</td>
+          <td>{{ txn['time'] }}</td>
+          <td>{{ txn['weight'] }}</td>
+          <td>{{ txn['points'] }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="4" class="no-transactions">No transactions yet</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
