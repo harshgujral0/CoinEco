@@ -392,6 +392,69 @@ def admin_edit(user_id):
 
     return render_template("admin_edit.html", user=user)
 
+@app.route("/api/get_user_by_pin", methods=["GET"])
+def get_user_by_pin():
+    pin = request.args.get("pin", "").strip()
+
+    if not pin:
+        return jsonify({"success": False, "error": "PIN required"}), 400
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT id, name, email, balance FROM users WHERE secret_pin=?", (pin,))
+    user = cur.fetchone()
+
+    if not user:
+        return jsonify({"success": False, "error": "User not found"}), 404
+
+    return jsonify({
+        "success": True,
+        "user_id": user["id"],
+        "name": user["name"],
+        "email": user["email"],
+        "balance": user["balance"]
+    })
+@app.route("/api/update_points_by_pin", methods=["POST"])
+def update_points_by_pin():
+    data = request.json or {}
+
+    pin = data.get("pin")
+    if not pin:
+        return jsonify({"success": False, "error": "PIN required"}), 400
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    # find user
+    cur.execute("SELECT id FROM users WHERE secret_pin=?", (pin,))
+    user = cur.fetchone()
+
+    if not user:
+        return jsonify({"success": False, "error": "Invalid PIN"}), 404
+
+    user_id = user["id"]
+
+    # data
+    material = data.get("material", "Unknown")
+    weight = float(data.get("weight", 0))
+    points = int(data.get("points", 0))
+    now = datetime.utcnow().isoformat()
+
+    # insert transaction
+    cur.execute("""
+        INSERT INTO transactions (user_id, material, weight, points, time)
+        VALUES (?, ?, ?, ?, ?)
+    """, (user_id, material, weight, points, now))
+
+    cur.execute("UPDATE users SET balance = balance + ? WHERE id=?", (points, user_id))
+    conn.commit()
+
+    cur.execute("SELECT balance FROM users WHERE id=?", (user_id,))
+    newbal = cur.fetchone()["balance"]
+
+    return jsonify({"success": True, "new_balance": newbal})
+
+
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 5000))
